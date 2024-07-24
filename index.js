@@ -20,7 +20,7 @@ const __dirname = path.resolve();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "", credentials: true }));
+app.use(cors({ origin: "http://localhost:5173/", credentials: true }));
 
 app.listen(5000 , ()=>{
     console.log("connected to 5000");
