@@ -1,66 +1,55 @@
 # Gruham Backend
 
-Gruham is a full-stack real estate marketplace web application. This repository contains the **backend code** for Gruham, built using **Node.js**, **Express.js**, **MongoDB**, and **Firebase**. It provides RESTful APIs for user authentication (including Google OAuth), listings management, and user profile operations.
+Gruham is a full-stack real estate marketplace web application. This repository contains the backend code for Gruham, built using Node.js, Express.js, MongoDB, and Firebase. It provides RESTful APIs for user authentication (including Google OAuth), listings management, and user profile operations.
 
----
+## Table of Contents
 
-## 📂 Table of Contents
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Why MongoDB](#why-mongodb)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+  - [Auth APIs](#auth-apis)
+  - [User APIs](#user-apis)
+  - [Listing APIs](#listing-apis)
+- [Error Handling](#error-handling)
+- [Authentication Middleware](#authentication-middleware)
+- [Setup Instructions](#setup-instructions)
+- [Environment Variables](#environment-variables)
+- [License](#license)
 
-* [Features](#features)
-* [Tech Stack](#tech-stack)
-* [Why MongoDB?](#why-mongodb)
-* [Project Structure](#project-structure)
-* [API Endpoints](#api-endpoints)
+## Features
 
-  * [Auth APIs](#auth-apis)
-  * [User APIs](#user-apis)
-  * [Listing APIs](#listing-apis)
-* [Error Handling](#error-handling)
-* [Authentication Middleware](#authentication-middleware)
-* [Setup Instructions](#setup-instructions)
-* [Environment Variables](#environment-variables)
-* [License](#license)
+- User authentication with email/password and Google OAuth
+- Protected routes using JWT authentication
+- Listing creation, update, deletion, and querying
+- User-specific listing management
+- Filtered and paginated listing search
+- Error handling and role-based access
 
----
-
-## ✨ Features
-
-* User authentication (email/password and Google OAuth)
-* Protected routes using JWT authentication
-* Listing creation, update, deletion, and querying
-* User-specific listing management
-* Filtered and paginated listing search
-* Error handling and role-based access
-
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology     | Purpose                                                 |
-| -------------- | ------------------------------------------------------- |
-| **Node.js**    | JavaScript runtime environment for building the backend |
-| **Express.js** | Web framework to manage routing and middleware          |
-| **MongoDB**    | NoSQL database to store user and listing data           |
-| **Mongoose**   | ODM to simplify interactions with MongoDB               |
-| **JWT**        | Authentication using JSON Web Tokens                    |
-| **Firebase**   | For image hosting and optionally Google OAuth           |
-| **bcryptjs**   | For securely hashing user passwords                     |
-| **dotenv**     | Environment variable management                         |
+|----------------|---------------------------------------------------------|
+| Node.js        | JavaScript runtime environment for building the backend |
+| Express.js     | Web framework to manage routing and middleware          |
+| MongoDB        | NoSQL database to store user and listing data           |
+| Mongoose       | ODM to simplify interactions with MongoDB               |
+| JWT            | Authentication using JSON Web Tokens                    |
+| Firebase       | For image hosting and optionally Google OAuth           |
+| bcryptjs       | For securely hashing user passwords                     |
+| dotenv         | Environment variable management                         |
 
----
-
-## 📃 Why MongoDB?
+## Why MongoDB
 
 MongoDB is used as the primary database because:
 
-* It provides flexible document-based schema suitable for real estate listings with varying attributes.
-* Easier integration with JavaScript using Mongoose ODM.
-* Offers scalability and performance for read/write heavy applications.
-* Allows fast development and schema evolution, which is helpful in MVP/prototyping stages.
+- It provides a flexible document-based schema suitable for real estate listings with varying attributes.
+- It integrates seamlessly with JavaScript using Mongoose ODM.
+- It offers scalability and performance for read/write-heavy applications.
+- It allows fast development and schema evolution, ideal for MVP and prototyping stages.
 
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 api/
@@ -80,55 +69,51 @@ api/
 │   └── verifyUser.js
 ```
 
----
+## API Endpoints
 
-## 📊 API Endpoints
+### Auth APIs
 
-### 🔐 Auth APIs - `/api/auth`
+| Method | Endpoint       | Description               |
+|--------|----------------|---------------------------|
+| POST   | `/api/auth/signup` | Register a new user       |
+| POST   | `/api/auth/login`  | Login with email/password |
+| POST   | `/api/auth/google` | Login via Google OAuth    |
+| GET    | `/api/auth/logout` | Clear token and logout    |
 
-| Method | Endpoint  | Description               |
-| ------ | --------- | ------------------------- |
-| POST   | `/signup` | Register a new user       |
-| POST   | `/login`  | Login with email/password |
-| POST   | `/google` | Login via Google OAuth    |
-| GET    | `/logout` | Clear token and logout    |
+### User APIs
 
-### 👤 User APIs - `/api/user`
+| Method | Endpoint            | Description                        |
+|--------|---------------------|------------------------------------|
+| GET    | `/api/user/test`    | Test endpoint                      |
+| POST   | `/api/user/update/:id` | Update user info                |
+| DELETE | `/api/user/delete/:id` | Delete user account             |
+| GET    | `/api/user/listings/:id` | Get all listings by user       |
+| GET    | `/api/user/:id`     | Get user info (excluding password) |
 
-| Method | Endpoint        | Description                        |
-| ------ | --------------- | ---------------------------------- |
-| GET    | `/test`         | Test endpoint                      |
-| POST   | `/update/:id`   | Update user info                   |
-| DELETE | `/delete/:id`   | Delete user account                |
-| GET    | `/listings/:id` | Get all listings by user           |
-| GET    | `/:id`          | Get user info (excluding password) |
+### Listing APIs
 
-### 📅 Listing APIs - `/api/listing`
+| Method | Endpoint           | Description                      |
+|--------|--------------------|----------------------------------|
+| POST   | `/api/listing/create` | Create a new listing (auth required) |
+| DELETE | `/api/listing/delete/:id` | Delete a listing (auth and owner required) |
+| POST   | `/api/listing/update/:id` | Update listing (auth and owner required) |
+| GET    | `/api/listing/get/:id` | Fetch specific listing by ID     |
+| GET    | `/api/listing/get`  | Get listings (filter and paginate) |
 
-| Method | Endpoint      | Description                      |
-| ------ | ------------- | -------------------------------- |
-| POST   | `/create`     | Create a new listing (auth req.) |
-| DELETE | `/delete/:id` | Delete a listing (auth + owner)  |
-| POST   | `/update/:id` | Update listing (auth + owner)    |
-| GET    | `/get/:id`    | Fetch specific listing by ID     |
-| GET    | `/get`        | Get listings (filter & paginate) |
-
-### Listing Query Parameters
+#### Listing Query Parameters
 
 Supports filtering by:
 
-* `searchTerm`
-* `offer`
-* `furnished`
-* `parking`
-* `type` ("sale" or "rent")
-* `limit`, `startIndex`, `sort`, `order`
+- `searchTerm`
+- `offer`
+- `furnished`
+- `parking`
+- `type` ("sale" or "rent")
+- `limit`, `startIndex`, `sort`, `order`
 
----
+## Error Handling
 
-## ⚠️ Error Handling
-
-Custom error handler (`utils/error.js`) is used across controllers:
+A custom error handler (`utils/error.js`) is used across controllers:
 
 ```js
 export const errorHandler = (statusCode, message) => {
@@ -141,9 +126,7 @@ export const errorHandler = (statusCode, message) => {
 
 This enables centralized handling and consistent HTTP responses.
 
----
-
-## 🔐 Authentication Middleware
+## Authentication Middleware
 
 JWT-based middleware ensures secure access to protected routes:
 
@@ -159,25 +142,24 @@ export const verifyToken = (req, res, next) => {
 };
 ```
 
----
+## Setup Instructions
 
-## ♻️ Setup Instructions
-
-1. **Clone the repository:**
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/gruham-backend.git
+git clone https://github.com/HemantBatra873/Gruham-Backend.git
 cd gruham-backend
 ```
 
-2. **Install dependencies:**
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. **Add environment variables:**
-   Create a `.env` file in root:
+3. Add environment variables:
+
+Create a `.env` file in the root directory:
 
 ```
 PORT=5000
@@ -185,31 +167,24 @@ MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
 ```
 
-4. **Run the server:**
+4. Run the server:
 
 ```bash
 npm run dev
 ```
 
----
-
-## 🔢 Environment Variables
+## Environment Variables
 
 | Key           | Description                       |
-| ------------- | --------------------------------- |
-| `PORT`        | Port number the server runs on    |
-| `MONGODB_URI` | MongoDB connection string         |
-| `JWT_SECRET`  | Secret key for signing JWT tokens |
+|---------------|-----------------------------------|
+| PORT          | Port number the server runs on    |
+| MONGODB_URI   | MongoDB connection string         |
+| JWT_SECRET    | Secret key for signing JWT tokens |
 
----
-
-## 🌐 License
+## License
 
 This project is licensed under the MIT License.
 
----
+## Maintainer
 
-## 📅 Maintainer
-
-**Gruham Backend** is built and maintained by Hemant Batra.
-Feel free to open issues or contribute!
+Gruham Backend is built and maintained by Hemant Batra. Feel free to open issues or contribute!
